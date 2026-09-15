@@ -1,0 +1,6 @@
+expenses.db
+identifier.sqlite
+__pycache__/
+.venv/
+venv/
+.idea/
