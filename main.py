@@ -1,9 +1,8 @@
-import sqlite3
+from db import connect
 import bcrypt
 from menu import *
+connection,cursor = connect()
 
-connection = sqlite3.connect('expenses.db')
-cursor = connection.cursor()
 
 def createuser():
     cin = int(input('Enter your CIN number: '))
@@ -55,12 +54,24 @@ def login():
         else:
             print("Password not matched!")
 #programme principale
-print("Welcome to the application!")
-print("press 1 to create a new user or press 2 to login or press 3 to exit")
-choice = int(input("enter your choice"))
-if choice == 1:
+while True:
+    print("Welcome to the application!")
+    print("press 1 to create a new user or press 2 to login or press 3 to exit")
+
+    choice = input("enter your choice")
+
+    if not choice.isdigit():
+        print("invalid choice, please try again")
+        continue
+
+    choice = int(choice)
+
+    if choice == 1:
         createuser()
-elif choice == 2:
+    elif choice == 2:
         login()
-else :
-        exit()
+    elif choice == 3:
+        print("Goodbye!")
+        break
+    else:
+        print("invalid choice, please try again")

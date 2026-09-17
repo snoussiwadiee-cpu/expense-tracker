@@ -1,182 +1,8 @@
-def addcat(cin):
-    print("quel categorie vous voulez l ajouter")
-    catname = input()
-
-    cursor.execute("""
-                   SELECT *
-                   FROM categories
-                   WHERE libelle = ?
-                     AND CIN = ?
-                   """, (catname, cin))
-
-    tab = cursor.fetchone()
-
-    if tab is not None:
-        print("categorie already exists")
-        while True:
-            catname = input("gimme another category: ")
-
-            cursor.execute("""
-                           SELECT *
-                           FROM categories
-                           WHERE libelle = ?
-                             AND CIN = ?
-                           """, (catname, cin))
-
-            tab = cursor.fetchone()
-
-            if tab is None:
-                break
-
-            print("categorie already exists")
-
-    cursor.execute(
-        """INSERT INTO categories (libelle, CIN)
-           VALUES (?, ?)""",
-        (catname, cin))
-
-    connection.commit()
-
-    print("do you want to go back to the menu or add another category ?")
-    print("press 1 if you want menu and 2 if you want to add another category")
-
-    answer = int(input("enter your choice"))
-    while answer != 1 and answer != 2:
-        print("Invalid choice")
-        answer = int(input("enter your choice"))
-
-    if answer == 1:
-        ret(cin)
-    else:
-        addcat(cin)
-
-
-def viewcat(cin):
-    cursor.execute(
-        """select idcat,libelle from categories where cin=?""",
-        (cin,))
-
-    tab = cursor.fetchall()
-
-    if not tab:
-        print("u dont have any categories")
-        print("press 1 if you want menu and 2 if you want to add category")
-
-        while True:
-            answer = int(input("enter your choice"))
-
-            if answer == 1:
-                ret(cin)
-                break
-
-            elif answer == 2:
-                addcat(cin)
-                break
-
-            else:
-                print("Invalid choice")
-
-    else:
-        j = 1
-
-        for i in tab:
-            print(str(j) + "-" + i[1])
-            j += 1
-
-
-def addexpenses(cin):
-    print("item categorie")
-
-    cursor.execute(
-        """select libelle,idcat from categories where cin=?""",
-        (cin,))
-
-    tab = cursor.fetchall()
-
-    if not tab:
-        print("u dont have any categories u need to add categories pls add categories")
-        print("press 1 if you want menu")
-
-        rep = int(input("enter your choice"))
-
-        while rep != 1:  # CHANGED
-            print("invalid choice")
-            rep = int(input("enter your choice"))
-
-        ret(cin)
-
-    else:
-        print("chosse from those categories u have")
-
-        j = 1
-
-        for i in tab:
-            print(str(j) + "+" + i[0])
-            j += 1
-
-        answer = int(input("enter your choice"))
-
-        while answer < 1 or answer > len(tab):
-            print("invalid choice")
-            answer = int(input("enter your choice"))
-
-        print("item expense")
-        price = float(input())
-
-        datexp = datetime.now()
-
-        print("item description")
-        description = input()
-
-        idcat = tab[answer - 1][1]
-
-        cursor.execute(
-            """insert into expenses
-               (price,idcat,date,description)
-               values (?, ?, ?,?)""",
-            (price, idcat, datexp, description))
-
-        connection.commit()
-
-        print("expense added successfully")
-        print("press 1 if you want menu and 2 if you want to add another expense")
-        answer = int(input("enter your choice"))
-        while answer != 1 and answer != 2:
-            print("invalid choice")
-            answer = int(input("enter your choice"))
-
-        if answer == 1:
-            ret(cin)
-        else:
-            addexpenses(cin)
-
-
-def viewexpenses(cin):
-    print("filer your choice of expenses")
-    print(
-        "press 1 if u want to filer by category and 2 if u want to filter by date and 3 if u want both and 4 if u want to see all ur expenses and 5 if u want to return to main menu")
-
-    answer = int(input("enter your choice"))
-    while answer < 1 or answer > 5:
-        print("Invalid choice")
-        answer = int(input("enter your choice"))
-
-    if answer == 1:
-        filtercat(cin)
-
-    elif answer == 2:
-        filterdate(cin)
-
-    elif answer == 3:
-        filterboth(cin)
-
-    elif answer == 4:
-        afficher(cin)
-    else :
-        ret(cin)
-
-
-
+from db import connect
+import menu
+connection,cursor = connect()
+import expenses
+from datetime import *
 def filtercat(cin):
     cursor.execute(
         """select idcat,libelle from categories where cin=?""",
@@ -186,7 +12,7 @@ def filtercat(cin):
 
     if not tab:
         print("u dont have any categories")
-        ret(cin)
+        menu.ret(cin)
         return
 
     print("which category do u want to filter ?")
@@ -215,9 +41,9 @@ def filtercat(cin):
             ans = int(input("enter your choice"))
 
         if ans == 1:
-            ret(cin)
+            menu.ret(cin)
         else:
-            addexpenses(cin)
+            expenses.addexpenses(cin)
 
     else:
         j = 1
@@ -257,7 +83,7 @@ def filterdate(cin):
             print("press 1 if you want menu")
             ans = int(input("enter your choice"))
 
-        ret(cin)
+        menu.ret(cin)
 
     else:
         k = 1
@@ -284,8 +110,8 @@ def filtermonth(cin):
             answer = int(input("enter your choice"))
 
         if answer == 1:
-            ret(cin)
-            return  \
+            menu.ret(cin)
+            return
 
         month = int(input("gimme a month"))
 
@@ -311,7 +137,7 @@ def filtermonth(cin):
             print("press 1 if you want menu")
             ans = int(input("enter your choice"))
 
-        ret(cin)
+        menu.ret(cin)
 
     else:
         k = 1
@@ -340,7 +166,7 @@ def filteryear(cin):
             answer = int(input("enter your choice"))
 
         if answer == 1:
-            ret(cin)
+            menu.ret(cin)
             return
 
         year = int(input("gimme a year"))
@@ -366,7 +192,7 @@ def filteryear(cin):
             print("press 1 if you want menu")
             ans = int(input("enter your choice"))
 
-        ret(cin)
+        menu.ret(cin)
 
     else:
         k = 1
