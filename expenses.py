@@ -1,3 +1,4 @@
+import filter
 from db import connect
 import menu
 connection,cursor = connect()
@@ -93,5 +94,76 @@ def viewexpenses(cin):
         afficher(cin)
     else :
         menu.ret(cin)
+
+def deleteexpenses(cin):
+    print("delete your choice of expenses")
+    print("press 1 if u want to filter ur expenses and 2 to go back to main menu")
+
+    answer = int(input("enter your choice"))
+
+    while answer not in [1, 2]:
+        print("invalid choice")
+        answer = int(input("enter your choice"))
+
+    if answer == 1:
+        print("select which type of filter u want")
+        print("1-filtercat \n2-filterdate \n3-filterboth")
+
+        answer = int(input("enter your choice"))
+
+        while answer not in [1, 2, 3]:
+            print("invalid choice")
+            answer = int(input("enter your choice"))
+
+        if answer == 1:
+            tab = filter.filtercat(cin)
+
+        elif answer == 2:
+            tab = filter.filterdate(cin)
+
+        else:
+            tab = filter.filterboth(cin)
+
+        j = 1
+
+        for i in tab:
+            print(str(j) + "+" + str(i[1]) + " " + i[3] + " " + str(i[4]))
+            j += 1
+
+        print("which one u want to delete")
+
+        ans = int(input("enter your choice"))
+
+        while ans not in range(1, j):
+            print("invalid choice")
+            ans = int(input("enter your choice"))
+        expense = tab[ans - 1]
+
+        cursor.execute("""
+            delete from expenses
+            where idcat = ?
+            and date = ?
+            and description = ?
+        """, (expense[2], expense[3], expense[4]))
+
+        connection.commit()
+
+        print("expense deleted successfully")
+        print("press 1 if you want menu and 2 if you want to delete another expense")
+
+        answer = int(input("enter your choice"))
+
+        while answer != 1 and answer != 2:
+            print("invalid choice")
+            answer = int(input("enter your choice"))
+
+        if answer == 1:
+            menu.ret(cin)
+        else:
+            deleteexpenses(cin)
+
+    else:
+        menu.ret(cin)
+
 
 

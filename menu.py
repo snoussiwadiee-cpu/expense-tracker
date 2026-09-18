@@ -11,7 +11,7 @@ def ret(cin):
     print("welcome back")
     print("chose what service u want to use")
     print(
-        "1-add categorie\n 2-view categories\n 3-add expenses \n 4-view expenses \n 5-delete expenses \n 6-monthly total() \n 7-categorie statistics \n 8-compare months \n 9-return to main menu")
+        "1-add categorie\n 2-view categories\n 3-add expenses \n 4-view expenses \n 5-delete expenses \n 6-monthly total \n 7-categorie statistics \n 8-compare months \n 9-logout")
 
     answer = int(input("enter your choice"))
 
@@ -25,7 +25,7 @@ def ret(cin):
         case 4:
             expenses.viewexpenses(cin)
         case 5:
-            pass
+            expenses.deleteexpenses(cin)
         case 6:
             pass
         case 7:
@@ -33,7 +33,7 @@ def ret(cin):
         case 8:
             pass
         case 9:
-            pass
+            exit()
         case _:
             print("Invalid choice")
             ret(cin)
@@ -48,7 +48,7 @@ def manage(cin):
 
     print("chose what service u want to use")
     print(
-        "1-add categorie\n 2-view categories\n 3-add expenses \n 4-view expenses \n 5-delete expenses \n 6-monthly total() \n 7-categorie statistics \n 8-compare months \n 9-return to main menu")
+        "1-add categorie\n 2-view categories\n 3-add expenses \n 4-view expenses \n 5-delete expenses \n 6-monthly total \n 7-categorie statistics \n 8-compare months \n 9-logout")
 
     answer = int(input("enter your choice"))
     match answer:
@@ -61,7 +61,7 @@ def manage(cin):
         case 4:
             expenses.viewexpenses(cin)
         case 5:
-            pass
+            expenses.deleteexpenses(cin)
         case 6:
             pass
         case 7:
@@ -69,7 +69,7 @@ def manage(cin):
         case 8:
             pass
         case 9:
-            pass
+            exit()
         case _:
             print("Invalid choice")
             ret(cin)

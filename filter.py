@@ -35,7 +35,6 @@ def filtercat(cin):
 
         ans = int(input("enter your choice"))
 
-        # CHANGED: validate choice
         while ans != 1 and ans != 2:
             print("invalid choice")
             ans = int(input("enter your choice"))
@@ -53,7 +52,7 @@ def filtercat(cin):
         for i in tab1:
             print(str(j) + "-" + i[4] + " " + str(i[1]) + " " + str(i[3]))
             j += 1
-
+    return tab1
 
 def filterdate(cin):
     print("gimme the date u want to filter ?")
@@ -91,6 +90,7 @@ def filterdate(cin):
         for i in tab:
             print(str(k) + "|" + i[1] + " " + str(i[2]) + " " + str(i[0]))
             k += 1
+        return tab
 
 
 def filtermonth(cin):
@@ -145,7 +145,7 @@ def filtermonth(cin):
         for i in tab:
             print(str(k) + "|" + i[1] + " " + str(i[2]) + " " + str(i[0]))
             k += 1
-
+        return tab
 
 def filteryear(cin):
     print("gimme the year u want to filter ?")
@@ -167,7 +167,6 @@ def filteryear(cin):
 
         if answer == 1:
             menu.ret(cin)
-            return
 
         year = int(input("gimme a year"))
 
@@ -200,7 +199,158 @@ def filteryear(cin):
         for i in tab:
             print(str(k) + "|" + i[1] + " " + str(i[2]) + " " + str(i[0]))
             k += 1
-def filterboth(cin) :
-    pass
+        return tab
+def filterboth(cin):
+    cursor.execute(
+        """select idcat, libelle
+           from categories
+           where cin = ?""",
+        (cin,))
+
+    tab = cursor.fetchall()
+
+    if not tab:
+        print("u dont have any categories")
+        menu.ret(cin)
+
+    print("which category do u want to filter ?")
+
+    answer = int(input("enter your choice"))
+
+    while answer < 1 or answer > len(tab):
+        print("invalid choice")
+        answer = int(input("enter your choice"))
+
+    print("press 1 if u want to filter on day")
+    print("press 2 if u want to filter on month")
+    print("press 3 if u want to filter on year")
+
+    ans = int(input("enter your choice"))
+
+    while ans < 1 or ans > 3:
+        print("invalid choice")
+        ans = int(input("enter your choice"))
+
+    if ans == 1:
+        print("gimme the date u want to filter ?")
+        print("use this form pls year-month-day")
+
+        Date = input("gimme a date sous la forme de aaaa-mm-dd")
+
+        cursor.execute("""
+            select e.price, c.libelle, e.description
+            from expenses e
+            join categories c
+            on e.idcat = c.idcat
+            where c.CIN = ?
+            and e.idcat = ?
+            and date(e.date) = ?
+        """, (cin, tab[answer - 1][0], Date))
+
+        tab = cursor.fetchall()
+        if not tab:
+            print("u dont have any expenses under these conditions")
+            print("press 1 if you want menu")
+
+            ans = int(input("enter your choice"))
+
+            while ans != 1:
+                print("invalid choice")
+                ans = int(input("enter your choice"))
+
+            menu.ret(cin)
+
+        else:
+            j = 1
+            for i in tab:
+                print(str(j) + "|" + str(i[0]) + " " + i[1] + " " + str(i[2]))
+                j += 1
+    elif ans == 2:
+        print("gimme the month u want to filter ?")
+        month = input()
+
+        cursor.execute("""
+                       select e.price, c.libelle, e.description
+                       from expenses e
+                                join categories c
+                                     on e.idcat = c.idcat
+                       where c.CIN = ?
+                         and e.idcat = ?
+                         and strftime('%m', e.date) = ?
+                       """, (cin, tab[answer - 1][0], month))
+
+        tab = cursor.fetchall()
+        if not tab:
+            print("u dont have any expenses under these conditions")
+            print("press 1 if you want menu")
+
+            ans = int(input("enter your choice"))
+
+            while ans != 1:
+                print("invalid choice")
+                ans = int(input("enter your choice"))
+
+            menu.ret(cin)
+
+        else:
+            j = 1
+            for i in tab:
+                print(str(j) + "|" + str(i[0]) + " " + i[1] + " " + str(i[2]))
+                j += 1
+    elif ans == 3:
+        print("gimme the year u want to filter ?")
+        year = input()
+        cursor.execute("""
+                       select e.price, c.libelle, e.description
+                       from expenses e
+                                join categories c
+                                     on e.idcat = c.idcat
+                       where c.CIN = ?
+                         and e.idcat = ?
+                         and strftime('%Y', e.date) = ?
+                       """, (cin, tab[answer - 1][0], year))
+
+        tab = cursor.fetchall()
+        if not tab:
+            print("u dont have any expenses under these conditions")
+            print("press 1 if you want menu")
+
+            ans = int(input("enter your choice"))
+
+            while ans != 1:
+                print("invalid choice")
+                ans = int(input("enter your choice"))
+
+            menu.ret(cin)
+
+        else:
+            j = 1
+            for i in tab:
+                print(str(j) + "|" + str(i[0]) + " " + i[1] + " " + str(i[2]))
+                j += 1
+            return tab
+
 def afficher(cin):
-    pass
+    print("voici tous vos expenses ")
+    cursor.execute("""select e.price, c.libelle, e.description from expenses e join categories c on e.idcat = c.idcat where c.cin=?""",(cin,))
+    tab = cursor.fetchall()
+    if not tab:
+        print("u dont have any expenses")
+        print("press 1 if you want menu")
+        ans = int(input("enter your choice"))
+        while ans != 1:
+            print("invalid choice")
+            ans = int(input("enter your choice"))
+        menu.ret(cin)
+    else :
+        j=1
+        for i in tab :
+            print(str(j) + "|" + str(i[0]) + " " + i[1] + " " + str(i[2]))
+            j += 1
+        print("press 1 to go back to menu")
+        ans = int(input("enter your choice"))
+        while ans != 1:
+            print("invalid choice")
+            ans = int(input("enter your choice"))
+        menu.ret(cin)
+        return tab
