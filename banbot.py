@@ -9,7 +9,7 @@ def ban(mail):
 def unban(mail,cin):
     if isbanned(mail)==False:
         print("u are still banned ")
-        #still i am going to add remaining time to get unbvan soon
+        #still i am going to add remaining time to get unban soon
         exit()
     else :
         cursor.execute("delete from ban_list where email=?",(mail,))
